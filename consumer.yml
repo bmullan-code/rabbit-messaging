@@ -1,0 +1,14 @@
+applications:
+- name: consumer
+  path: target/spring-boot-amqp-messaging-0.1.0.jar
+  disk_quota: 1G
+  instances: 1
+  memory: 1G
+  random-route: true
+  buildpack: java_buildpack_offline
+  services:
+  - my-rabbit-mq
+  stack: cflinuxfs2
+  env:
+    CONSUMER: true
+    PRODUCER: false

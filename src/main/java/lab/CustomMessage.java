@@ -1,18 +1,21 @@
-package com.thepracticaldeveloper.rabbitmqconfig;
+package lab;
 
 import java.io.Serializable;
 
-public final class CustomMessage implements Serializable{
+public final class CustomMessage implements Serializable {
 
+	private long id;
     private String text;
     private int priority;
     private boolean secret;
+
 
     // Default constructor is needed to deserialize JSON
     public CustomMessage() {
     }
 
-    public CustomMessage(String text, int priority, boolean secret) {
+    public CustomMessage(long id, String text, int priority, boolean secret) {
+    		this.id = id;
         this.text = text;
         this.priority = priority;
         this.secret = secret;
@@ -38,4 +41,12 @@ public final class CustomMessage implements Serializable{
                 ", secret=" + secret +
                 '}';
     }
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 }
