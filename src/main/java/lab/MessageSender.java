@@ -14,20 +14,20 @@ import org.springframework.stereotype.Service;
 
 @ConditionalOnProperty("producer")
 @Service
-public class CustomMessageSender {
+public class MessageSender {
 	
 	private final AtomicLong counter = new AtomicLong();
-    private static final Logger log = LoggerFactory.getLogger(CustomMessageSender.class);
+    private static final Logger log = LoggerFactory.getLogger(MessageSender.class);
     private final RabbitTemplate rabbitTemplate;
 
     @Autowired
-    public CustomMessageSender(final RabbitTemplate rabbitTemplate) {
+    public MessageSender(final RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    @Scheduled(fixedDelay = 50000L)
+    @Scheduled(fixedDelay = 750L)
     public void sendMessage() {
-        final CustomMessage message = new CustomMessage(
+        final QueueMessage message = new QueueMessage(
         		counter.incrementAndGet(),
         		"Hello there!", 
         		new Random().nextInt(50), 

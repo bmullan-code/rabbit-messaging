@@ -10,9 +10,9 @@ import java.util.concurrent.TimeUnit;
 
 @ConditionalOnProperty("consumer")
 @Service
-public class CustomMessageListener {
+public class MessageListener {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomMessageListener.class);
+    private static final Logger log = LoggerFactory.getLogger(MessageListener.class);
 
     @RabbitListener(queues = MessagingApplication.QUEUE_GENERIC_NAME)
     public void receiveMessage(final Message message) {
@@ -25,7 +25,7 @@ public class CustomMessageListener {
     }
 
     @RabbitListener(queues = MessagingApplication.QUEUE_SPECIFIC_NAME)
-    public void receiveMessage(final CustomMessage customMessage) {
+    public void receiveMessage(final QueueMessage customMessage) {
         log.info("Received message as specific class: {}", customMessage.toString());
         try {
         	TimeUnit.SECONDS.sleep(1);

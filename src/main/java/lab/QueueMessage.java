@@ -2,7 +2,7 @@ package lab;
 
 import java.io.Serializable;
 
-public final class CustomMessage implements Serializable {
+public final class QueueMessage implements Serializable {
 
 	private long id;
     private String text;
@@ -11,10 +11,10 @@ public final class CustomMessage implements Serializable {
 
 
     // Default constructor is needed to deserialize JSON
-    public CustomMessage() {
+    public QueueMessage() {
     }
 
-    public CustomMessage(long id, String text, int priority, boolean secret) {
+    public QueueMessage(long id, String text, int priority, boolean secret) {
     		this.id = id;
         this.text = text;
         this.priority = priority;

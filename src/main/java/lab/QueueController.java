@@ -1,6 +1,8 @@
 package lab;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
@@ -13,15 +15,19 @@ import org.springframework.web.bind.annotation.RestController;
 import io.micrometer.core.annotation.Timed;
 
 @RestController
-public class HelloController {
+public class QueueController {
 
 	private final RabbitTemplate rabbitTemplate;
 	private final AtomicLong counter = new AtomicLong();
-    private static final Logger log = LoggerFactory.getLogger(CustomMessageSender.class);
+    private static final Logger log = LoggerFactory.getLogger(MessageSender.class);
 	
 	@Autowired
-    public HelloController(final RabbitTemplate rabbitTemplate) {
+    public QueueController(final RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
+        System.out.println("===============================");
+        String vcapServices = System.getenv("VCAP_SERVICES");
+        System.out.println(vcapServices);
+        System.out.println("===============================");
     }
 	
 	@RequestMapping("/")
@@ -29,12 +35,12 @@ public class HelloController {
 		return "Hello!";
 	}
 	
-	@Timed(value = "enqueue_restapi.invoke", histogram = true, percentiles = { 0.95, 0.99 }, extraTags = { "version",
-	"v1" })
+	@Timed(value = "enqueue_restapi.invoke", histogram = true, percentiles = { 0.5,0.95, 0.99 }, extraTags = { "version",
+		"v1" })
 	@RequestMapping("/enqueue")
-	public String enqueue() {
-//		private val counter = Metrics.counter("handler.calls", "uri", "/messages");
-        final CustomMessage message = new CustomMessage(
+	public String enqueue() throws InterruptedException {
+
+		final QueueMessage message = new QueueMessage(
         		counter.incrementAndGet(),
         		"Hello there!", 
         		new Random().nextInt(50), 
@@ -42,6 +48,10 @@ public class HelloController {
     		);
         log.info("Sending message..." + message.getId());
         rabbitTemplate.convertAndSend(MessagingApplication.EXCHANGE_NAME, MessagingApplication.ROUTING_KEY, message);
+
+        	// simulate processing delay.
+        TimeUnit.MILLISECONDS.sleep(
+        		ThreadLocalRandom.current().nextInt(100, 500));
         
         return String.valueOf(message.getId());
 	}
