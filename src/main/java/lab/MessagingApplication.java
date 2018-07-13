@@ -1,5 +1,7 @@
 package lab;
 
+import org.apache.catalina.Context;
+import org.apache.catalina.webresources.StandardRoot;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -13,6 +15,8 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
@@ -95,6 +99,24 @@ public class MessagingApplication implements RabbitListenerConfigurer {
 	@Override
 	public void configureRabbitListeners(final RabbitListenerEndpointRegistrar registrar) {
 		registrar.setMessageHandlerMethodFactory(messageHandlerMethodFactory());
+	}
+	
+	@Bean
+	public ServletWebServerFactory servletContainer() {
+		TomcatServletWebServerFactory tomcatFactory = new TomcatServletWebServerFactory() {
+	        @Override
+	        protected void postProcessContext(Context context) {
+	            final int cacheSize = 0 * 1024;
+	            StandardRoot standardRoot = new StandardRoot(context);
+	            standardRoot.setCacheMaxSize(cacheSize);
+	            standardRoot.setCachingAllowed(false);
+	            context.setResources(standardRoot); // This is what made it work in my case.
+	            
+
+	            System.out.print(String.format("New cache size (KB): %d", context.getResources().getCacheMaxSize()));
+	        }
+	    };
+	    return tomcatFactory;
 	}
 
 }
