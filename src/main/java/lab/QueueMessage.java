@@ -36,6 +36,7 @@ public final class QueueMessage implements Serializable {
     @Override
     public String toString() {
         return "CustomMessage{" +
+        			"id='" + id + "' " +
                 "text='" + text + '\'' +
                 ", priority=" + priority +
                 ", secret=" + secret +

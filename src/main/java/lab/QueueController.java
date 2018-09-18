@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.micrometer.core.annotation.Timed;
-import io.micrometer.core.instrument.Gauge;
-import io.micrometer.core.instrument.MeterRegistry;
+//import io.micrometer.core.annotation.Timed;
+//import io.micrometer.core.instrument.Gauge;
+//import io.micrometer.core.instrument.MeterRegistry;
 
 @RestController
 public class QueueController {
@@ -29,19 +29,19 @@ public class QueueController {
     private List<QueueMessage> quota = new ArrayList<>(1000);
     private static final List<String> keys = new LinkedList<String>();
     
-    Gauge gauge = null;
+//    Gauge gauge = null;
 	
 	@Autowired
-    public QueueController(final RabbitTemplate rabbitTemplate,MeterRegistry registry) {
+    public QueueController(final RabbitTemplate rabbitTemplate /*,MeterRegistry registry*/) {
         this.rabbitTemplate = rabbitTemplate;
         System.out.println("===============================");
         String vcapServices = System.getenv("VCAP_SERVICES");
         System.out.println(vcapServices);
         System.out.println("===============================");
 
-        gauge = Gauge
-            .builder("quota.usage", quota, List::size)
-            .register(registry);
+//        gauge = Gauge
+//            .builder("quota.usage", quota, List::size)
+//            .register(registry);
 
     }
 
@@ -53,8 +53,8 @@ public class QueueController {
 		return "Hello!";
 	}
 	
-	@Timed(value = "enqueue_restapi.invoke", histogram = true, percentiles = { 0.5,0.95, 0.99 }, extraTags = { "version",
-		"v1" })
+//	@Timed(value = "enqueue_restapi.invoke", histogram = true, percentiles = { 0.5,0.95, 0.99 }, extraTags = { "version",
+//		"v1" })
 	@RequestMapping("/enqueue")
 	public String enqueue() throws InterruptedException {
 

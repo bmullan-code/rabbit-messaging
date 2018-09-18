@@ -1,13 +1,12 @@
 applications:
 - name: consumer
   path: target/spring-boot-amqp-messaging-0.1.0.jar
-  disk_quota: 1G
-  instances: 1
+  disk_quota: 512M
   memory: 1G
   random-route: true
-  buildpack: java_buildpack
+  buildpack: java_buildpack_offline
   services:
-  - my-rabbit-mq
+    - rabbit-mq
   stack: cflinuxfs2
   env:
     CONSUMER: true

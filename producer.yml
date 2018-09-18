@@ -4,10 +4,11 @@ applications:
   disk_quota: 1G
   instances: 1
   memory: 1G
+  disk_quota: 512M
   random-route: true
   buildpack: java_buildpack_offline
   services:
-  - my-rabbit-mq
+  - rabbit-mq
   stack: cflinuxfs2
   env:
     CONSUMER: false

@@ -28,7 +28,7 @@ public class MessageListener {
     public void receiveMessage(final QueueMessage customMessage) {
         log.info("Received message as specific class: {}", customMessage.toString());
         try {
-        	TimeUnit.SECONDS.sleep(1);
+        		TimeUnit.SECONDS.sleep(2);
         } catch(java.lang.InterruptedException ie) {
         	log.info("Interrupted");
         }
