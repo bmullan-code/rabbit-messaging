@@ -4,9 +4,8 @@ applications:
   disk_quota: 512M
   memory: 1G
   random-route: true
-  buildpack: java_buildpack_offline
   services:
-    - rabbit-mq
+    - rabbit1
   stack: cflinuxfs2
   env:
     CONSUMER: true

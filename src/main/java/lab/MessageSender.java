@@ -25,7 +25,7 @@ public class MessageSender {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    @Scheduled(fixedDelay = 500L)
+    @Scheduled(fixedDelay = 750L)
     public void sendMessage() {
         final QueueMessage message = new QueueMessage(
         		counter.incrementAndGet(),
