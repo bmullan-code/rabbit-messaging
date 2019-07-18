@@ -30,5 +30,5 @@ java -jar target/spring-boot-amqp-messaging-0.1.0.jar --PRODUCER=true --server.p
 ```
 To run the producer ... 
 ```
-java -jar target/spring-boot-amqp-messaging-0.1.0.jar --PRODUCER=true --server.port=8081
+java -jar target/spring-boot-amqp-messaging-0.1.0.jar --PRODUCER=true --server.port=8082
 ```
