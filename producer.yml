@@ -5,9 +5,8 @@ applications:
   instances: 1
   memory: 1G
   random-route: true
-  buildpack: java_buildpack_offline
   services:
-  - rabbit1
+  - rabbit3
   stack: cflinuxfs2
   env:
     CONSUMER: false

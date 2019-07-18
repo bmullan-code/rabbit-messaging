@@ -5,7 +5,8 @@ applications:
   memory: 1G
   random-route: true
   services:
-    - rabbit1
+    - rabbit2
+    - myforwarder
   stack: cflinuxfs2
   env:
     CONSUMER: true

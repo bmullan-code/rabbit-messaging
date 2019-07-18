@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+//import io.micrometer.core.instrument.Metrics;
 
 
 @ConditionalOnProperty("producer")
@@ -35,5 +36,6 @@ public class MessageSender {
     		);
         log.info("Sending message..." + message.getId());
         rabbitTemplate.convertAndSend(MessagingApplication.EXCHANGE_NAME, MessagingApplication.ROUTING_KEY, message);
+//        Metrics.counter("producer.messagesender.requests").increment();
     }
 }

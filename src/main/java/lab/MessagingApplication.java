@@ -30,10 +30,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class MessagingApplication implements RabbitListenerConfigurer {
 
-	public static final String EXCHANGE_NAME = "appExchange";
+	public static final String EXCHANGE_NAME = "myexchange";
 	public static final String QUEUE_GENERIC_NAME = "appGenericQueue";
 	public static final String QUEUE_SPECIFIC_NAME = "appSpecificQueue";
-	public static final String ROUTING_KEY = "messages.key";
+	public static final String ROUTING_KEY = "mykey";
 
 	public static void main(String[] args) {
 		SpringApplication.run(MessagingApplication.class, args);
