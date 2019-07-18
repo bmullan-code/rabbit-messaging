@@ -14,3 +14,21 @@ Note that you need a RabbitMQ server instance running locally to be able to run 
 
 I recommend you to have a look at the full explanation of this code, you can find it
 [on The Practical Developer site](https://thepracticaldeveloper.com/2016/10/23/produce-and-consume-json-messages-with-spring-boot-amqp/).
+
+
+To run locally ... 
+```
+docker run -d --hostname my-rabbit --name some-rabbit -p 5672:5672 -p 15672:15672 rabbitmq:3.7-management
+```
+Build with ...
+```
+mvn clean package -DskipTests=true
+```
+To run the consumer ...
+```
+java -jar target/spring-boot-amqp-messaging-0.1.0.jar --PRODUCER=true --server.port=8081
+```
+To run the producer ... 
+```
+java -jar target/spring-boot-amqp-messaging-0.1.0.jar --PRODUCER=true --server.port=8081
+```
