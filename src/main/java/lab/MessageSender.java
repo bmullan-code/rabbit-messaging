@@ -1,6 +1,7 @@
 package lab;
 
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
@@ -31,25 +32,16 @@ public class MessageSender {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    @Scheduled(fixedDelay = 750L)
+    @Scheduled(fixedDelay = 7500L)
     public void sendMessage() {
         final QueueMessage message = new QueueMessage(
         		counter.incrementAndGet(),
-        		"Hello there!", 
-        		new Random().nextInt(50), 
-        		false
+        		UUID.randomUUID().toString() 
     		);
         log.info("Sending message..." + message.getId());
-        rabbitTemplate.convertAndSend(MessagingApplication.EXCHANGE_NAME, MessagingApplication.ROUTING_KEY, message);
-        
-        Integer count = (Integer) 
-        		amqpAdmin.getQueueProperties(MessagingApplication.QUEUE_GENERIC_NAME)
-        		.get("QUEUE_MESSAGE_COUNT");
-        
-        String metricName = MessagingApplication.QUEUE_GENERIC_NAME + ".queue.depth";
-        
-        Metrics.counter(metricName).increment();
-        System.out.println(metricName+":"+count);
-        
+        rabbitTemplate.convertAndSend(
+        		MessagingApplication.EXCHANGE_NAME, 
+        		MessagingApplication.ROUTING_KEY, 
+        		message);
     }
 }

@@ -1,11 +1,11 @@
 applications:
 - name: consumer
   path: target/spring-boot-amqp-messaging-0.1.0.jar
-  disk_quota: 512M
+  disk_quota: 1G
   memory: 1G
   random-route: true
   services:
-    - rabbit-mq
+    - rabbit1
   env:
     CONSUMER: true
     PRODUCER: false

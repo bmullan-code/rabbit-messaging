@@ -6,7 +6,7 @@ applications:
   memory: 1G
   random-route: true
   services:
-  - rabbit-mq
+  - rabbit1
   env:
     CONSUMER: false
     PRODUCER: true

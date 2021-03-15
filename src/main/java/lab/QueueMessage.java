@@ -1,53 +1,41 @@
 package lab;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 public final class QueueMessage implements Serializable {
 
 	private long id;
-    private String text;
-    private int priority;
-    private boolean secret;
-
+    private String guid;
 
     // Default constructor is needed to deserialize JSON
     public QueueMessage() {
     }
 
-    public QueueMessage(long id, String text, int priority, boolean secret) {
-    		this.id = id;
-        this.text = text;
-        this.priority = priority;
-        this.secret = secret;
+    public QueueMessage(long id, String guid) {
+		this.id = id;
+		this.guid = guid;
     }
-
-    public String getText() {
-        return text;
+    public void setGuid(String guid) {
+    	this.guid = guid;
     }
-
-    public int getPriority() {
-        return priority;
+    public String getGuid() {
+        return this.guid;
     }
+	public void setId(long id) {
+		this.id = id;
+	}
 
-    public boolean isSecret() {
-        return secret;
+    public long getId() {
+    	return this.id;
     }
 
     @Override
     public String toString() {
         return "CustomMessage{" +
         			"id='" + id + "' " +
-                "text='" + text + '\'' +
-                ", priority=" + priority +
-                ", secret=" + secret +
+                "guid='" + guid + '\'' +
                 '}';
     }
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
 }

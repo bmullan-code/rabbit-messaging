@@ -22,16 +22,12 @@ import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-//import io.micrometer.core.instrument.MeterRegistry;
-
-
 @SpringBootApplication
 @EnableRabbit
 @EnableScheduling
 public class MessagingApplication implements RabbitListenerConfigurer {
 
 	public static final String EXCHANGE_NAME = "myexchange";
-	public static final String QUEUE_GENERIC_NAME = "appGenericQueue";
 	public static final String QUEUE_SPECIFIC_NAME = "appSpecificQueue";
 	public static final String ROUTING_KEY = "mykey";
 
@@ -39,31 +35,14 @@ public class MessagingApplication implements RabbitListenerConfigurer {
 		SpringApplication.run(MessagingApplication.class, args);
 	}
 	
-//	@Bean
-//    MeterRegistryCustomizer<MeterRegistry> metricsCommonTags() {
-//        return registry -> {
-//            registry.config().commonTags("application", "AMQP-Producer");
-//        };
-//    }
-	
 	@Bean
 	public TopicExchange appExchange() {
 		return new TopicExchange(EXCHANGE_NAME);
 	}
 
 	@Bean
-	public Queue appQueueGeneric() {
-		return new Queue(QUEUE_GENERIC_NAME);
-	}
-
-	@Bean
 	public Queue appQueueSpecific() {
 		return new Queue(QUEUE_SPECIFIC_NAME);
-	}
-
-	@Bean
-	public Binding declareBindingGeneric() {
-		return BindingBuilder.bind(appQueueGeneric()).to(appExchange()).with(ROUTING_KEY);
 	}
 
 	@Bean
@@ -100,22 +79,4 @@ public class MessagingApplication implements RabbitListenerConfigurer {
 	public void configureRabbitListeners(final RabbitListenerEndpointRegistrar registrar) {
 		registrar.setMessageHandlerMethodFactory(messageHandlerMethodFactory());
 	}
-	
-//	@Bean
-//	public ServletWebServerFactory servletContainer() {
-//		TomcatServletWebServerFactory tomcatFactory = new TomcatServletWebServerFactory() {
-//	        @Override
-//	        protected void postProcessContext(Context context) {
-//	            final int cacheSize = 0 * 1024;
-//	            StandardRoot standardRoot = new StandardRoot(context);
-//	            standardRoot.setCacheMaxSize(cacheSize);
-//	            standardRoot.setCachingAllowed(false);
-//	            context.setResources(standardRoot); // This is what made it work in my case.
-//
-//	            System.out.print(String.format("New cache size (KB): %d", context.getResources().getCacheMaxSize()));
-//	        }
-//	    };
-//	    return tomcatFactory;
-//	}
-
 }
