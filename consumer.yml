@@ -1,6 +1,6 @@
 applications:
 - name: consumer
-  path: target/spring-boot-amqp-messaging-0.1.0.jar
+  path: target/spring-boot-rabbit-messaging-0.1.0.jar
   disk_quota: 1G
   memory: 1G
   random-route: true
