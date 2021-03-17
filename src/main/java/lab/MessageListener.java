@@ -21,14 +21,14 @@ public class MessageListener {
     
     RestTemplate restTemplate = new RestTemplate();
     
-    private String statusUrl = "http://localhost:9001/request/%s/status/%s";
-    private String requestUrl = "http://localhost:9001/request/%s/content";
+    private String statusUrl = "https://%s/request/%s/status/%s";
+    private String requestUrl = "https://%s/request/%s/content";
     private Random random = new Random();
     
-    private void updateStatus(String guid, String status) {
+    private void updateStatus(QueueMessage message, String status) {
 		try {
 			URI uri = new URI(String.format(this.statusUrl,
-					guid,status));
+				message.getSourceHost(),message.getGuid(),status));
 
 			System.out.println(uri.toString());
 			
@@ -43,12 +43,14 @@ public class MessageListener {
     private void sendContent(QueueMessage message) {
     	try {
 			URI uri = new URI(String.format(this.requestUrl,
-					message.getGuid().toString()));
+					message.getSourceHost(),message.getGuid().toString()));
 			System.out.println(uri.toString());
 			restTemplate.postForObject(uri, message, String.class);
 			
 		} catch(Exception use) {
+			
 			System.out.println("Exception:"+use.toString());
+			use.printStackTrace();
 		}
     	
     }
@@ -58,17 +60,16 @@ public class MessageListener {
         log.info("Received message as specific class: {}", customMessage.toString());
         
         try {
-			updateStatus(customMessage.getGuid(),"Processing");
+			updateStatus(customMessage,"Processing");
 			// insert a random delay to simulate processing time
 			int delay = random.nextInt(10)*1000;
 			log.info("Pausing for {} milliseconds",delay);
             Thread.sleep(delay);
+            this.sendContent(customMessage);
+            updateStatus(customMessage,"Complete");
         } catch (Exception e) {
 			e.printStackTrace();
-			this.sendContent(customMessage);
-		} finally {
-			this.sendContent(customMessage);
-			updateStatus(customMessage.getGuid(),"Complete");	
+			updateStatus(customMessage,"Error");
 		}
     }
 }

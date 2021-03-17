@@ -1,4 +1,5 @@
 package lab;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -64,6 +65,11 @@ public class FileUtils {
                 guid+".txt",
                 content.toString());
         } else {
+        	// check for the directory, create if necessary
+        	File theDir = new File(this.dataPath);
+        	if (!theDir.exists()){
+        	    theDir.mkdirs();
+        	}
         	FileWriter writer = new FileWriter(this.dataPath+"/"+guid+".txt");
         	writer.write(content);
         	writer.close();

@@ -7,8 +7,17 @@ public final class QueueMessage implements Serializable {
 
 	private long id;
     private String guid;
+    private String sourceHost;
 
-    // Default constructor is needed to deserialize JSON
+    public String getSourceHost() {
+		return sourceHost;
+	}
+
+	public void setSourceHost(String sourceHost) {
+		this.sourceHost = sourceHost;
+	}
+
+	// Default constructor is needed to deserialize JSON
     public QueueMessage() {
     }
 
