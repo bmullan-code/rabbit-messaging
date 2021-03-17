@@ -1,5 +1,6 @@
 package lab;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
@@ -9,8 +10,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,8 +25,11 @@ public class QueueController {
 
 	private final RabbitTemplate rabbitTemplate;
 	private final AtomicLong counter = new AtomicLong();
-    private static final Logger log = LoggerFactory.getLogger(MessageSender.class);
+    private static final Logger log = LoggerFactory.getLogger(QueueController.class);
     private HashMap<String,String> map = new HashMap<>();
+    
+	@Autowired
+	private FileUtils fileUtil;
 
 	@Autowired
     public QueueController(final RabbitTemplate rabbitTemplate) {
@@ -56,9 +64,6 @@ public class QueueController {
         		MessagingApplication.ROUTING_KEY, 
         		message
 		);
-        
-        
-        
         return message.getGuid();
 	}
 	
@@ -76,6 +81,13 @@ public class QueueController {
 	@RequestMapping("/request/{guid}/download")
 	public String download() throws InterruptedException {
 		return "File";
+	}
+	
+	@PostMapping("/request/{guid}/content")
+	ResponseEntity<String> postContent( @RequestBody QueueMessage message) throws IOException {
+		this.fileUtil.putObject(message.getGuid(), message.toString());
+		
+		return new ResponseEntity<>("Hello World!", HttpStatus.OK);
 	}
 
 }

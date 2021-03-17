@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+
 @Configuration
 @EnableRabbit
 public class AppConfig {
@@ -18,7 +19,7 @@ public class AppConfig {
     public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
-        factory.setConcurrentConsumers(5);
+        factory.setConcurrentConsumers(3);
         factory.setMaxConcurrentConsumers(10);
 //        factory.setContainerCustomizer(container -> /* customize the container */);
         return factory;

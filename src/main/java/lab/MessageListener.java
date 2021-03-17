@@ -1,22 +1,16 @@
 package lab;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.concurrent.TimeUnit;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 
 @ConditionalOnProperty("consumer")
@@ -24,48 +18,56 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 public class MessageListener {
 
     private static final Logger log = LoggerFactory.getLogger(MessageListener.class);
+    
     RestTemplate restTemplate = new RestTemplate();
     
-    AWSCredentials credentials = new BasicAWSCredentials(
-    		  "", 
-    		  ""
-	);
+    private String statusUrl = "http://localhost:9001/request/%s/status/%s";
+    private String requestUrl = "http://localhost:9001/request/%s/content";
+    private Random random = new Random();
     
-    AmazonS3 s3client = AmazonS3ClientBuilder
-    		  .standard()
-    		  .withCredentials(new AWSStaticCredentialsProvider(credentials))
-    		  .withRegion(Regions.US_EAST_2)
-    		  .build();
-    
-    private String statusUrl = "http://localhost:8000/request/%s/status/%s";
-    
-    private void updateStatus(String guid, String status) throws URISyntaxException {
-        URI uri = new URI(String.format(this.statusUrl,
-    			guid,status));
-        
-        restTemplate.put( 
-        	uri,null
-        );
+    private void updateStatus(String guid, String status) {
+		try {
+			URI uri = new URI(String.format(this.statusUrl,
+					guid,status));
+
+			System.out.println(uri.toString());
+			
+			restTemplate.put( 
+				uri,null
+			);
+		} catch(Exception use) {
+			System.out.println("Exception:"+use.toString());
+		}
     }
     
+    private void sendContent(QueueMessage message) {
+    	try {
+			URI uri = new URI(String.format(this.requestUrl,
+					message.getGuid().toString()));
+			System.out.println(uri.toString());
+			restTemplate.postForObject(uri, message, String.class);
+			
+		} catch(Exception use) {
+			System.out.println("Exception:"+use.toString());
+		}
+    	
+    }
+
     @RabbitListener(queues = MessagingApplication.QUEUE_SPECIFIC_NAME)
-    public void receiveMessage(final QueueMessage customMessage) throws URISyntaxException {
+    public void receiveMessage(final QueueMessage customMessage)  {
         log.info("Received message as specific class: {}", customMessage.toString());
         
-        
-        updateStatus(customMessage.getGuid(),"Processing");
-        s3client.putObject(
-		  "a-sample-bucket-9b289a5080e2", 
-		  customMessage.getGuid()+".txt",
-		  customMessage.toString()
-//		  new File("/Users/user/Document/hello.txt")
-        );
-        
-    	try {
-			TimeUnit.MINUTES.sleep(1);
-		} catch (InterruptedException e) {
+        try {
+			updateStatus(customMessage.getGuid(),"Processing");
+			// insert a random delay to simulate processing time
+			int delay = random.nextInt(10)*1000;
+			log.info("Pausing for {} milliseconds",delay);
+            Thread.sleep(delay);
+        } catch (Exception e) {
 			e.printStackTrace();
+			this.sendContent(customMessage);
 		} finally {
+			this.sendContent(customMessage);
 			updateStatus(customMessage.getGuid(),"Complete");	
 		}
     }
