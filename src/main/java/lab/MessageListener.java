@@ -31,13 +31,12 @@ public class MessageListener {
 		try {
 			URI uri = new URI(String.format(this.statusUrl,
 				message.getSourceHost(),message.getGuid(),status));
-
+			
 			log.info(uri.toString());
 			
 			restTemplate.put( 
 				uri,null
 			);
-
 		} catch(Exception use) {
 			System.out.println("Exception:"+use.toString());
 		}
@@ -50,11 +49,10 @@ public class MessageListener {
 			URI uri = new URI(String.format(this.requestUrl,
 				message.getSourceHost(),message.getGuid().toString()));
 			System.out.println(uri.toString());
-		
+
 			restTemplate.postForObject(uri, message, String.class);
-			
-		} catch(Exception use) {
-			
+
+    	} catch(Exception use) {
 			System.out.println("Exception:"+use.toString());
 			use.printStackTrace();
 		}
@@ -72,9 +70,9 @@ public class MessageListener {
 			// insert a random delay to simulate processing time
 			int delay = random.nextInt(60)*1000;
 			log.info("Pausing for {} milliseconds",delay);
-            Thread.sleep(delay);
-            this.sendContent(customMessage);
-            updateStatus(customMessage,"Complete");
+			Thread.sleep(delay);
+			this.sendContent(customMessage);
+			updateStatus(customMessage,"Complete");
         } catch (Exception e) {
 			e.printStackTrace();
 			updateStatus(customMessage,"Error");
