@@ -48,14 +48,14 @@ public class QueueController {
 	private FileUtils fileUtil;
 
 	@Autowired
-    public QueueController(final RabbitTemplate rabbitTemplate) {
-        this.rabbitTemplate = rabbitTemplate;
-        System.out.println("===============================");
-        String vcapServices = System.getenv("VCAP_SERVICES");
-        System.out.println(vcapServices);
-        System.out.println("===============================");
-    }
-
+	public QueueController(final RabbitTemplate rabbitTemplate) {
+	    this.rabbitTemplate = rabbitTemplate;
+	    System.out.println("===============================");
+	    String vcapServices = System.getenv("VCAP_SERVICES");
+	    System.out.println(vcapServices);
+	    System.out.println("===============================");
+	}
+	
 	// default route. 
 	@RequestMapping("/")
 	public String greet(@RequestHeader(value="host")String host) {	
@@ -67,7 +67,7 @@ public class QueueController {
 	public HashMap map() {
 		return this.map;
 	}
-	
+
 	// creates a queue message and puts it on the rabbitmq queue
 	@RequestMapping("/request/enqueue")
 	public String enqueue() throws InterruptedException {
@@ -78,17 +78,17 @@ public class QueueController {
 		);
 		
 		message.setSourceHost(this.application_uris[0]);
-        log.info("Sending message..." + message.getGuid());
-        map.put(message.getGuid().toString(), "Queued");
-        
-        // send to the rabbitmq queue using an exchange
-        rabbitTemplate.convertAndSend(
-        		MessagingApplication.EXCHANGE_NAME, 
-        		MessagingApplication.ROUTING_KEY, 
-        		message
+		log.info("Sending message..." + message.getGuid());
+		map.put(message.getGuid().toString(), "Queued");
+		
+		// send to the rabbitmq queue using an exchange
+		rabbitTemplate.convertAndSend(
+				MessagingApplication.EXCHANGE_NAME, 
+				MessagingApplication.ROUTING_KEY, 
+				message
 		);
-        
-        return message.getGuid();
+		
+		return message.getGuid();
 	}
 	
 	// returns the status of an individual request based on its guid
