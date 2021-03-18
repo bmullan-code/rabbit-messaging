@@ -62,7 +62,7 @@ public class MessageListener {
         try {
 			updateStatus(customMessage,"Processing");
 			// insert a random delay to simulate processing time
-			int delay = random.nextInt(10)*1000;
+			int delay = random.nextInt(60)*1000;
 			log.info("Pausing for {} milliseconds",delay);
             Thread.sleep(delay);
             this.sendContent(customMessage);
