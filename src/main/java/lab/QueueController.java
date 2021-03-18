@@ -31,7 +31,7 @@ public class QueueController {
 	// get the host name the request is being made on, we will pass it in the queue item so we know 
 	// where to call back to with the results
 	@Value("${vcap.application.application_uris:localhost}")
-    private String[] application_uris;
+	private String[] application_uris;
 
 	// the rabbit template is our interface with the queue
 	private final RabbitTemplate rabbitTemplate;
@@ -39,12 +39,12 @@ public class QueueController {
 	// we will store in memory a hashmap of requests and their status. Note this only works for when we have a 
 	// single instances of the api, better to use a shared redis or cloud-cache or store in a database 
 	private HashMap<String,String> map = new HashMap<>();
-    
+	
 	private final AtomicLong counter = new AtomicLong();
-    private static final Logger log = LoggerFactory.getLogger(QueueController.class);
+	private static final Logger log = LoggerFactory.getLogger(QueueController.class);
     
 	// file utils is used to persist files to s3 or filesystem (see application.properties for configuration)
-    @Autowired
+	@Autowired
 	private FileUtils fileUtil;
 
 	@Autowired
