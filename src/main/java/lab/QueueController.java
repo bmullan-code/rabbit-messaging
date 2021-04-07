@@ -1,7 +1,9 @@
 package lab;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -11,7 +13,10 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 // QueueController is a rest api that enqueues items onto a rabbitmq and then receives 
 // updates from the consumer
@@ -35,6 +41,8 @@ public class QueueController {
 
 	// the rabbit template is our interface with the queue
 	private final RabbitTemplate rabbitTemplate;
+	
+	private final RestTemplate restTemplate = new RestTemplate();
 	
 	// we will store in memory a hashmap of requests and their status. Note this only works for when we have a 
 	// single instances of the api, better to use a shared redis or cloud-cache or store in a database 
@@ -54,6 +62,27 @@ public class QueueController {
 	    String vcapServices = System.getenv("VCAP_SERVICES");
 	    System.out.println(vcapServices);
 	    System.out.println("===============================");
+	}
+	
+	private void sendMetricString(String metricString) {
+		
+		HttpHeaders headers = new HttpHeaders();
+	    headers.setContentType(MediaType.TEXT_PLAIN);
+	    headers.setBearerAuth("9802d09e-2da4-4b2f-8fc5-1c792670e212");
+	    List<MediaType> accept =
+	    	      Collections.singletonList(MediaType.APPLICATION_JSON);
+	    headers.setAccept(accept);
+//	    String metricString = "test.metric 100 source=test.source";
+	    String url = "https://vmware.wavefront.com/report?f=wavefront";
+	    
+	    HttpEntity<String> request = 
+	    	      new HttpEntity<String>(metricString, headers);
+	    
+	    ResponseEntity<String> responseEntityStr = 
+	    		restTemplate.postForEntity(url, request, String.class);
+	    
+//	    System.out.println("RestTemplate Return:" );
+//	    System.out.println(responseEntityStr.getStatusCodeValue());
 	}
 	
 	// default route. 
@@ -101,6 +130,10 @@ public class QueueController {
 	@PutMapping("/request/{guid}/status/{status}")
 	public void updateStatus(@PathVariable("guid") String guid,
 			                 @PathVariable("status") String status)  {
+		
+
+		this.sendMetricString("rabbit.producer.status " + status + " source=rabbit.producer");
+		
 		map.put(guid, status);
 	}
 
@@ -116,6 +149,8 @@ public class QueueController {
 	ResponseEntity<String> postContent( @RequestBody QueueMessage message) throws IOException {
 	
 		this.fileUtil.putObject(message.getGuid(), message.toString());
+		
+		this.sendMetricString("rabbit.producer.delay " + message.getDelay() + " source=rabbit.producer");
 		
 		return new ResponseEntity<>("Hello World!", HttpStatus.OK);
 	}

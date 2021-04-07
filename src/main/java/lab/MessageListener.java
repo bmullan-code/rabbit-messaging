@@ -71,6 +71,7 @@ public class MessageListener {
 			int delay = random.nextInt(60)*1000;
 			log.info("Pausing for {} milliseconds",delay);
 			Thread.sleep(delay);
+			customMessage.setDelay(delay);
 			this.sendContent(customMessage);
 			updateStatus(customMessage,"Complete");
         } catch (Exception e) {

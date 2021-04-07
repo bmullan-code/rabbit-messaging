@@ -8,8 +8,18 @@ public final class QueueMessage implements Serializable {
 	private long id;
     private String guid;
     private String sourceHost;
+    private long delay;
+    
 
-    public String getSourceHost() {
+    public long getDelay() {
+		return delay;
+	}
+
+	public void setDelay(long delay) {
+		this.delay = delay;
+	}
+
+	public String getSourceHost() {
 		return sourceHost;
 	}
 
