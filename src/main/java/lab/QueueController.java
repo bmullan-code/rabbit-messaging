@@ -68,7 +68,7 @@ public class QueueController {
 		
 		HttpHeaders headers = new HttpHeaders();
 	    headers.setContentType(MediaType.TEXT_PLAIN);
-	    headers.setBearerAuth("9802d09e-2da4-4b2f-8fc5-1c792670e212");
+	    headers.setBearerAuth("<<token>>");
 	    List<MediaType> accept =
 	    	      Collections.singletonList(MediaType.APPLICATION_JSON);
 	    headers.setAccept(accept);
